@@ -1,0 +1,674 @@
+{% extends 'layout.html' %} {% block style %}
+<style>
+#timeline {
+    padding: 50px 60px;
+}
+
+#timeline #distribution {
+    text-align: center;
+    position: relative;
+}
+
+#timeline #distribution #control_panel {
+    color: #666;
+    position: absolute;
+    right: 24px;
+    top: 0;
+    background-color: #f5f5f5;
+    padding-left: 20px;
+    padding-bottom: 20px;
+}
+#timeline #distribution #control_panel .controller {
+    margin-bottom: 3px;
+}
+#timeline #distribution #control_panel .controller:hover {
+    cursor: pointer;
+}
+#timeline #distribution #control_panel .controller:hover>div {
+    border: 2px #666 solid;
+}
+#timeline #distribution #control_panel .controller>div {
+    display: inline-block;
+    margin-right: 10px;
+    position: relative;
+    top: 1px;
+}
+
+#timeline #distribution #control_panel #distribution_mode {
+    margin-top: 15px;
+}
+#timeline #distribution #control_panel #distribution_mode:hover {
+    cursor: pointer;
+}
+
+#timeline #distribution #control_panel #distribution_mode div {
+    display: inline-block;
+    height: 18px;
+    width: 20px;
+    background: none;
+    border: 1px solid #FF7772;
+    position: relative;
+    top: 3px;
+    transition: background-color .6s;
+    -o-transition: background-color .6s;
+    -ms-transition: background-color .6s;
+    -moz-transition: background-color .6s;
+    -webkit-transition: background-color .6s;
+}
+#timeline #distribution #control_panel #distribution_mode div#mode1 {
+    border-top-left-radius: 2px;
+    border-bottom-left-radius: 2px;
+    margin-left: 8px;
+}
+
+#timeline #distribution #control_panel #distribution_mode div#mode2 {
+    border-top-right-radius: 2px;
+    border-bottom-right-radius: 2px;
+}
+#timeline #distribution #control_panel #distribution_mode div.active {
+    background-color: #FF7772;
+}
+
+
+#timeline #distribution text {
+    fill: #666;
+}
+
+#timeline #distribution rect:hover,
+#timeline #distribution rect.active {
+    cursor: pointer;
+    stroke: #222;
+}
+
+#timeline #detail {
+    padding-top: 50px;
+}
+
+#timeline #detail #section1,
+#section2,
+#section3 {
+    background-color: #fdfdfd;
+    box-shadow: 0px 0px 20px #B5B5B5;
+    border-radius: 10px;
+}
+
+#timeline #detail #section1 .headline,
+#timeline #detail #section3 .headline {
+    box-shadow: 0px 3px 5px #B5B5B5;
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+    padding: 2px 10px;
+}
+
+#timeline #detail #section1 .headline h4,
+#timeline #detail #section3 .headline h4 {
+    display: inline-block;
+    text-align: center;
+    margin-top: 10px;
+    color: #333;
+}
+
+#timeline #detail #section1 tr:first-child td {
+    border-top: none;
+}
+
+#timeline #detail #section1 tr:hover {
+    cursor: pointer;
+}
+
+#timeline #detail #section1 tr.active td {
+    background-color: #666;
+    color: #fff;
+}
+
+#timeline #detail #section1 table th {
+    text-align: center;
+    color: #333;
+    border-top: none;
+}
+
+#timeline #detail #section1 table td {
+    color: #555;
+}
+
+#timeline #detail #section1 table tr span.full,
+#timeline #detail #section1 table tr.active span.abstract {
+    display: none;
+}
+
+#timeline #detail #section1 table tr.active span.full,
+#timeline #detail #section1 table tr span.abstract {
+    display: block;
+}
+
+#timeline #detail #section2 {
+    padding: 0;
+}
+
+#timeline #detail #section2 h4 {
+    color: #fff;
+    padding: 10px 15px;
+    line-height: 1.3;
+    margin: 0;
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+    box-shadow: 0px 3px 5px #B5B5B5;
+}
+
+#timeline #detail #section2 div {
+    font-size: 13px;
+    color: #666;
+    line-height: 1.6;
+    padding: 15px 20px;
+}
+
+#timeline #detail #section2 div p {
+    text-indent: 2em;
+}
+
+#timeline #detail #section2 div p:last-child {
+    margin-bottom: 0;
+}
+
+#timeline #detail #section2 div p span {
+    background-color: #FF7772;
+    color: #fff;
+}
+</style>
+{% endblock %} {% block body %}
+<div id="timeline">
+    <div id="distribution">
+        <div id="control_panel"></div>
+        <svg width='1024px' height='320px'>
+            <g></g>
+        </svg>
+    </div>
+    <div id="detail">
+        <div class="row">
+            <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                <div id="section2">
+                    <h4>&nbsp;</h4>
+                    <div style="overflow-y:scroll;height:307px;"></div>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                <div id="section1">
+                    <div class="headline">
+                        <h4 style='width:50px;'>分类</h4>
+                        <h4 style='width:55px;'>日期</h4>
+                        <h4 style='width:100px;'>内容</h4>
+                    </div>
+                    <div style="height:307px;overflow-y:scroll;padding:10px 20px;">
+                        <table class="table table-hover" style="margin-bottom:0;">
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                <div id="section3">
+                    <div class="headline">
+                        <h4 style="width:100px;text-align:center">&nbsp;</h4>
+                    </div>
+                    <div id='knowledge' style="height:307px;overflow:hidden;padding:10px 20px;text-align:center;">
+                        <svg width='300px' height='290px'>
+                            <g></g>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+$(document).ready(function() {
+    var height = 320;
+    $('#distribution svg').append($(document.createElementNS("http://www.w3.org/2000/svg", "line")).attr({
+        'x1': 24,
+        'y1': height - 20,
+        'x2': 1000,
+        'y2': height - 20,
+        'stroke': '#000',
+        'stroke-width': 1
+    }));
+    var axis = eval('({{axis|safe}})');
+    var interX = Math.floor(976 / axis['slot']),
+        startX = parseInt((976 - interX * axis['slot']) / 2) + 24,
+        endX = 1024 - startX;
+    for (var i = 0; i <= axis['slot']; i++) {
+        $('#distribution svg').append($(document.createElementNS("http://www.w3.org/2000/svg", "line")).attr({
+            'x1': startX + i * interX,
+            'y1': height - 25,
+            'x2': startX + i * interX,
+            'y2': height - 20,
+            'stroke': '#000',
+            'stroke-width': 1
+        }));
+        $('#distribution svg').append($(document.createElementNS("http://www.w3.org/2000/svg", "text")).attr({
+            'x': startX + i * interX - 20,
+            'y': height,
+        }).text(axis['xs'][i]));
+    }
+    var elements = eval('({{timeline|safe}})');
+    var news = eval('({{news|safe}})');
+    var maxnum = eval('({{maxnum|safe}})');
+    var colors = new Array();
+    colors['1'] = "#FC9D9A";
+    colors['2'] = "#F9CDAD";
+    colors['3'] = "#C8C8A9";
+    colors['4'] = "#83AF9B";
+    colors['6'] = "#E49AFC";
+    colors['7'] = "#67AEDA";
+    var status = new Array();
+    status['1'] = true;
+    status['2'] = true;
+    status['3'] = true;
+    status['4'] = true;
+    status['6'] = true;
+    status['7'] = true;
+    var flag = true;
+    categories = new Array();
+    categories['1'] = '新闻背景';
+    categories['2'] = '事实陈述';
+    categories['3'] = '事件演化';
+    categories['4'] = '各方态度';
+    categories['6'] = '直接关联';
+    categories['7'] = '暂无关联';
+    for (var i = 1, j = 0; i < 8; i++) {
+        if (!colors.hasOwnProperty(i)) continue;
+        j++;
+        $('#distribution #control_panel').append("<div class='controller' id='controller" + i + "'><div style='width:16px;height:12px;background-color:" + colors[i] + "'></div> " + categories[i] + "</div>")
+    }
+    $('#distribution #control_panel').append("<div id='distribution_mode'><span>堆叠<span/><div class='active' id='mode1'></div><div id='mode2'></div></div>")
+    $('#distribution #distribution_mode').click(function(){
+        if (flag) {
+            flag = !flag;
+            $('#distribution #distribution_mode #mode1').removeClass('active');
+            $('#distribution #distribution_mode #mode2').addClass('active');
+        }
+        else {
+            flag = !flag;
+            $('#distribution #distribution_mode #mode2').removeClass('active');
+            $('#distribution #distribution_mode #mode1').addClass('active');
+        }
+        if (flag) {
+            distribution();
+        }
+        else {
+            distribution1();
+        }
+    });
+    $('#timeline #distribution .controller').click(function() {
+        var rect = $(this);
+        var tmp = rect.attr('id').charAt(rect.attr('id').length - 1);
+        if (status[tmp]) {
+            status[tmp] = false;
+            rect.css('color', '#bbb');
+            rect.children('div').css('background-color', '#bbb');
+        } else {
+            status[tmp] = true;
+            rect.css('color', '#666');
+            rect.children('div').css('background-color', colors[tmp]);
+        }
+        if (flag) {
+            distribution();
+        }
+        else {
+            distribution1();
+        }
+    });
+
+    var curves = eval('({{curves|safe}})');
+    var curve1 = d3.svg.line().x(function(d) {
+        return parseInt(parseFloat(d[0]) * (endX - startX)) + startX;
+    }).y(function(d) {
+        return 0;
+    }).interpolate('monotone');
+    var curve2 = d3.svg.line().x(function(d) {
+        return parseInt(parseFloat(d[0]) * (endX - startX)) + startX;
+    }).y(function(d) {
+        return height - 20 - d[1] * Math.floor((height - 20) / maxnum['line']);
+    }).interpolate('monotone');
+
+    for (var k in curves) {
+        d3.select('#distribution svg g').append('path').style("opacity", 1e-6).attr('d', curve1(curves[k])).attr({
+            fill: 'none',
+            stroke: colors[k],
+            name: k
+        }).transition().duration(600).attr('d', curve2(curves[k])).style("opacity", 1).style("z-index", 999);
+    }
+
+    distribution();
+
+    function distribution() {
+        $('#distribution svg line.refers').remove();
+
+        var yPos = new Array();
+        var data = new Array();
+        for (var i = 0; i < elements.length; i++) {
+            if (status[elements[i]['tag']]) {
+                data.push(i);
+            }
+        }
+
+        for (var k in status) {
+            if (status[k]) {
+                $('#distribution svg g path[name="' + k + '"]').animate({
+                    opacity: 1
+                }, 600);
+            } else {
+                $('#distribution svg g path[name="' + k + '"]').animate({
+                    opacity: 0
+                }, 600);
+            }
+        }
+
+        var text = d3.select('#distribution svg g').selectAll('rect').data(data, function(d) {
+            return d;
+        });
+        text.transition().duration(600).attr('transform', function(d) {
+            var tmp = startX + parseInt((endX - startX) * elements[d]['x']) - 8;
+            if (yPos.hasOwnProperty(tmp)) {
+                yPos[tmp] += 1;
+            } else {
+                yPos[tmp] = 1;
+            }
+            return 'translate(' + tmp + ',' + (height - 25 - yPos[tmp] * parseInt((height - 20) / maxnum['stack'])) + ')';
+        }).attr({
+            'height': parseInt((height - 20) / maxnum['stack'] * 0.8),
+        });
+        text.enter().append('rect').attr({
+            'width': 16,
+            'height': parseInt((height - 20) / maxnum['stack'] * 0.8),
+            'fill': function(d) {
+                return colors[elements[d]['tag']];
+            },
+            'transform': function(d) {
+                var tmp = startX + parseInt((endX - startX) * elements[d]['x']) - 8;
+                return 'translate(' + tmp + ',' + (height - 40) + ')';
+            },
+            'name': function(d) {
+                return d;
+            }
+        }).transition().duration(600).attr('transform', function(d) {
+            var tmp = startX + parseInt((endX - startX) * elements[d]['x']) - 8;
+            if (yPos.hasOwnProperty(tmp)) {
+                yPos[tmp] += 1;
+            } else {
+                yPos[tmp] = 1;
+            }
+            return 'translate(' + tmp + ',' + (height - 25 - yPos[tmp] * parseInt((height - 20) / maxnum['stack'])) + ')';
+        });
+        text.exit().transition().duration(600).attr('transform', function(d) {
+            var tmp = startX + parseInt((endX - startX) * elements[d]['x']) - 8;
+            if (Math.random() > 0.5) {
+                return 'translate(0, 0)';
+            } else {
+                return 'translate(1024, 0)';
+            }
+        }).style("fill-opacity", 1e-6).remove();
+
+        $('#timeline #section1 table tr').remove();
+        for (var i = 0; i < data.length; i++) {
+            $('#timeline #section1 table').append($("<tr name='" + data[i] + "'><td style='width:50px;'><div style='position:relative;left:7px;height:16px;width:20px;background-color:" + colors[elements[data[i]]['tag']] + "'></div></td><td style='width:55px;'>" + elements[data[i]]['timestamp'].substr(5) + "</td><td><span  class='abstract'>" + elements[data[i]]['sentence'].substr(0, 20) + "...</span><span class='full'>" + elements[data[i]]['sentence'] + "</span></td></tr>"));
+        }
+    }
+
+    function distribution1() {
+        var yPos = new Array();
+        var current = 0;
+        var data = new Array();
+        var data1 = new Array();
+        data1['1'] = [];
+        data1['2'] = [];
+        data1['3'] = [];
+        data1['4'] = [];
+        data1['6'] = [];
+        data1['7'] = [];
+        for (var i = 0; i < elements.length; i++) {
+            if (status[elements[i]['tag']]) {
+                data1[elements[i]['tag'].toString()].push(i);
+                data.push(i);
+            }
+        }
+        data1 = data1['1'].concat(data1['2']).concat(data1['3']).concat(data1['4']).concat(data1['6']).concat(data1['7']);
+
+        $('#distribution svg g path').animate({
+            opacity: 0
+        }, 600);
+
+        $('#distribution svg line.refers').remove();
+
+        var text = d3.select('#distribution svg g').selectAll('rect').data(data1, function(d) {
+            return d;
+        });
+        text.transition().duration(600).attr('transform', function(d, i) {
+            var tmp = startX + parseInt((endX - startX) * elements[d]['x']) - 8;
+            if (yPos.hasOwnProperty(tmp)) {
+                yPos[tmp] += 1;
+            } else {
+                yPos[tmp] = 1;
+            }
+
+            var result = 'translate(' + tmp + ',' + (height - 25 - yPos[tmp] * parseInt((height - 20) / maxnum['band']) - current) + ')';
+
+            if (i % 20 == 19) {
+                var t = 0;
+                for (var k in yPos) {
+                    if (yPos[k] > t) {
+                        t = yPos[k];
+                    }
+                }
+                yPos = new Array();
+                current += t * parseInt((height - 20) / maxnum['band']);
+                $('#distribution svg').append($(document.createElementNS("http://www.w3.org/2000/svg", "line")).attr({
+                    'x1': 24,
+                    'y1': height - 25 - current,
+                    'x2': 1000,
+                    'y2': height - 25 - current,
+                    'stroke': '#ccc',
+                    'stroke-width': 1,
+                    'class': 'refers'
+                }));
+            }
+
+            return result;
+        }).attr({
+            'height': parseInt((height - 20) / maxnum['band'] * 0.8)
+        });
+        text.enter().append('rect').attr({
+            'width': 16,
+            'height': parseInt((height - 20) / maxnum['band'] * 0.8),
+            'fill': function(d) {
+                return colors[elements[d]['tag']];
+            },
+            'transform': function(d) {
+                var tmp = startX + parseInt((endX - startX) * elements[d]['x']) - 8;
+                return 'translate(' + tmp + ',' + (height - 40) + ')';
+            },
+            'name': function(d) {
+                return d;
+            }
+        }).transition().duration(600).attr('transform', function(d, i) {
+            var tmp = startX + parseInt((endX - startX) * elements[d]['x']) - 8;
+            if (yPos.hasOwnProperty(tmp)) {
+                yPos[tmp] += 1;
+            } else {
+                yPos[tmp] = 1;
+            }
+
+            var result = 'translate(' + tmp + ',' + (height - 25 - yPos[tmp] * parseInt((height - 20) / maxnum['band']) - current) + ')';
+
+            if (i % 20 == 19) {
+                var t = 0;
+                for (var k in yPos) {
+                    if (yPos[k] > t) {
+                        t = yPos[k];
+                    }
+                }
+                yPos = new Array();
+                current += t * parseInt((height - 20) / maxnum['band']);
+                $('#distribution svg').append($(document.createElementNS("http://www.w3.org/2000/svg", "line")).attr({
+                    'x1': 24,
+                    'y1': height - 25 - current,
+                    'x2': 1000,
+                    'y2': height - 25 - current,
+                    'stroke': '#ccc',
+                    'stroke-width': 1,
+                    'class': 'refers'
+                }));
+            }
+
+            return result;
+        });
+        text.exit().transition().duration(600).attr('transform', function(d) {
+            var tmp = startX + parseInt((endX - startX) * elements[d]['x']) - 8;
+            if (Math.random() > 0.5) {
+                return 'translate(0, 0)';
+            } else {
+                return 'translate(1024, 0)';
+            }
+        }).style("fill-opacity", 1e-6).remove();
+
+        $('#timeline #section1 table tr').remove();
+        for (var i = 0; i < data.length; i++) {
+            $('#timeline #section1 table').append($("<tr name='" + data[i] + "'><td style='width:50px;'><div style='position:relative;left:7px;height:16px;width:20px;background-color:" + colors[elements[data[i]]['tag']] + "'></div></td><td style='width:55px;'>" + elements[data[i]]['timestamp'].substr(5) + "</td><td><span  class='abstract'>" + elements[data[i]]['sentence'].substr(0, 20) + "...</span><span class='full'>" + elements[data[i]]['sentence'] + "</span></td></tr>"));
+        }
+    }
+
+    function choose(num) {
+        $('#timeline #distribution svg g rect').attr('class', '');
+        $('#timeline #distribution svg g rect[name="' + num + '"]').attr('class', 'active');
+
+        $('#timeline #detail #section1 table tr').removeClass('active');
+        $('#timeline #detail #section1 table tr[name="' + num + '"]').addClass('active');
+        $('#timeline #detail #section2 h4').css('background-color', colors[elements[num]['tag']]);
+        $('#timeline #detail #section3 h4').text('知识图谱');
+        var tmp, sentence = elements[num]['sentence'];
+        for (var i = 0; i < news.length; i++) {
+            if (news[i]['title'] == elements[num]['title']) {
+                tmp = news[i];
+                break;
+            }
+        }
+
+        $('#timeline #detail #knowledge .link').remove();
+        $('#timeline #detail #knowledge .node').remove();
+
+        var force = d3.layout.force()
+            .charge(-250)
+            .linkDistance(90)
+            .size([300, 290]);
+
+        force
+            .nodes(tmp['knowledge'].nodes)
+            .links(tmp['knowledge'].links)
+            .start();
+
+        var link = d3.select('#knowledge svg g').selectAll(".link")
+            .data(tmp['knowledge'].links)
+            .enter().append("line")
+            .attr("class", "link")
+            .style("stroke-width", function(d) {
+                return Math.floor(Math.sqrt(2 * d.value));
+            }).style("stroke", "rgba(200,200,200,0.8)");
+
+        // var node = d3.select('#knowledge svg g').selectAll(".node")
+        //     .data(tmp['knowledge'].nodes)
+        //     .enter().append("circle")
+        //     .attr("class", "node")
+        //     .attr("r", 5)
+        //     .style("fill", function(d) {
+        //         return colors[d.group];
+        //     })
+        //     .call(force.drag);
+        var node = d3.select('#knowledge svg g').selectAll(".node")
+            .data(tmp['knowledge'].nodes)
+            .enter().append("text")
+            .attr("class", "node")
+            .text(function(d) {
+                return d.name;
+            })
+            .style("fill", function(d) {
+                if (d.group == 1) {
+                    return "#FC9D9A";
+                } else {
+                    return "#67AEDA";
+                }
+            })
+            .style("font-size", "15px")
+            .call(force.drag);
+
+        // node.append("title")
+        //     .text(function(d) {
+        //         return d.name;
+        //     });
+
+        force.on("tick", function() {
+            link.attr("x1", function(d) {
+                    return d.source.x;
+                })
+                .attr("y1", function(d) {
+                    return d.source.y;
+                })
+                .attr("x2", function(d) {
+                    return d.target.x;
+                })
+                .attr("y2", function(d) {
+                    return d.target.y;
+                });
+
+            node.attr("x", function(d) {
+                    return d.x;
+                })
+                .attr("y", function(d) {
+                    return d.y;
+                })
+                .attr("dy", 6)
+                .attr("dx", function(d) {
+                    return -d.name.length * 7.5;
+                })
+                .style('background-color', '#f5f5f5');
+        });
+
+        $('#timeline #detail #section2 h4').text(tmp['title']);
+        $('#timeline #detail #section2 div').height(300 - $('#timeline #detail #section2 h4').height());
+        $('#timeline #detail #section2 div p').remove();
+        tmp = tmp['content'].split('<br/>');
+        for (var i = 0; i < tmp.length; i++) {
+            if (tmp[i] != '') {
+                if (tmp[i].indexOf(sentence) >= 0) {
+                    var s1 = tmp[i].substr(0, tmp[i].indexOf(sentence)),
+                        s2 = tmp[i].substr(tmp[i].indexOf(sentence), sentence.length),
+                        s3 = tmp[i].substr(tmp[i].indexOf(sentence) + sentence.length);
+                    $('#timeline #detail #section2 div').append('<p>' + s1 + '<span>' + s2 + '</span>' + s3 + '</p>');
+                } else {
+                    $('#timeline #detail #section2 div').append('<p>' + tmp[i] + '</p>')
+                }
+            }
+        }
+        if ($('#timeline #detail #section2 div').has('span').length) {
+            var diff = $('#timeline #detail #section2 div span').offset().top - $('#timeline #detail #section2 div p:first-child').offset().top;
+            if (diff > 80) {
+                $('#timeline #detail #section2 div').animate({
+                    scrollTop: diff - 80
+                }, 300);
+            }
+        }
+
+        diff = $('#timeline #detail #section1 tr[name="' + num + '"]').offset().top - $('#timeline #detail #section1 tr:first-child').offset().top;
+        if (diff > 100) {
+            $('#timeline #detail #section1 div:last-child').animate({
+                scrollTop: diff - 80
+            }, 300);
+        }
+    }
+
+    $('#timeline #detail #section1 table').on('click', 'tr', function() {
+        choose($(this).attr('name'));
+    });
+    $('#timeline #distribution svg g').on('click', 'rect', function() {
+        choose($(this).attr('name'));
+    });
+});
+</script>
+{% endblock %}
