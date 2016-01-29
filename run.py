@@ -9,7 +9,10 @@ import warnings
 warnings.filterwarnings("ignore")
 from config import *
 from module.crawl import *
-from module.db import connectdb, closedb
+from module.classify import *
+from module.knowledge import *
+from module.timeline import *
+# from module.db import connectdb, closedb
 import numpy as np
 import math
 
@@ -25,8 +28,14 @@ def index():
 @app.route('/search', methods=['POST'])
 def search():
 	data = request.form
-	raw_news = Crawler(data['keyword']).run()
-	return json.dumps({'news': raw_news})
+	if data['token'] == TOKEN:
+		Crawler(data['keyword']).run()
+		Classifier(data['keyword'])
+		Knowledger(data['keyword'])
+		Timeliner(data['keyword'])
+		return json.dumps({'ok': True})
+	else:
+		return json.dumps({'ok': False})
 
 @app.route('/timeline/<keyword>')
 def timeline(keyword):
@@ -38,6 +47,8 @@ def timeline(keyword):
 		news[x]['knowledge'] = json.loads(news[x]['knowledge'])
 	cursor.execute('select * from timeline where keyword=%s order by rank desc',[keyword])
 	timeline = list(cursor.fetchall())
+	for item in timeline:
+		item['timestamp'] = int(item['timestamp'])
 	tmp = []
 	for x in [1,2,3,4,6,7]:
 		count = 0
@@ -53,8 +64,8 @@ def timeline(keyword):
 	timeline.sort(lambda x,y:cmp(x['timestamp'],y['timestamp']))
 	closedb(db,cursor)
 
-	begintime = np.min([int(time.mktime(time.strptime(x['timestamp'], '%Y-%m-%d'))) for x in timeline])
-	endtime = np.max([int(time.mktime(time.strptime(x['timestamp'], '%Y-%m-%d'))) for x in timeline])
+	begintime = np.min([x['timestamp'] for x in timeline])
+	endtime = np.max([x['timestamp'] for x in timeline])
 	day = (endtime - begintime) / 3600 / 24
 	slot = np.argmax([float(day)/(math.ceil(float(day)/x)*x) for x in xrange(5,11)]) + 5
 	interval = math.ceil(day / slot)
@@ -71,7 +82,7 @@ def timeline(keyword):
 	stack = {}
 	tmp = endtime - begintime
 	for item in timeline:
-		item['x'] = (float(time.mktime(time.strptime(item['timestamp'], '%Y-%m-%d'))) - begintime) / tmp
+		item['x'] = (float(item['timestamp']) - begintime) / tmp
 		if not str(item['x']) in  allX:
 			allX.append(str(item['x']))
 		if not curves[str(item['tag'])].has_key(str(item['x'])):
@@ -93,7 +104,10 @@ def timeline(keyword):
 				tmp.append([i, 0])
 		curves[key] = tmp
 	maxnum['band'] = np.sum([np.max([v[1] for v in value]) for key,value in curves.items()])
-	print maxnum
+	for item in timeline:
+		item['timestamp'] = time.strftime('%Y-%m-%d', time.localtime(float(item['timestamp'])))
+
+	print len(timeline) 
 
 	return render_template('timeline.html', news=json.dumps(news), timeline=json.dumps(timeline), axis=axis, curves=json.dumps(curves), maxnum=json.dumps(maxnum))
 

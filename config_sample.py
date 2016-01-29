@@ -6,3 +6,4 @@ DATABASE = 'dbname'
 CHARSET = 'utf8'
 
 REDISPASSWORD = 'root'
+TOKEN = 'token'

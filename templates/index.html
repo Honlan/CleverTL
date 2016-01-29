@@ -4,20 +4,30 @@
     padding: 50px 60px;
 }
 
+#index #timelines {
+    margin-bottom: 20px;
+}
+
 #index .form-group {
     width: 40%;
     margin: 0 auto;
-    margin-bottom: 240px;
+    margin-bottom: 120px;
+}
+
+#index #token {
+    width: 80%;
+    margin: 0 auto;
+    margin-top: 15px;
 }
 
 #index #search {
-    font-size: 25px;
+    font-size: 18px;
     text-align: center;
 }
 
 #index #search span {
     border: 1px solid #666;
-    padding: 10px 30px;
+    padding: 8px 24px;
     border-radius: 5px;
     position: relative;
     top: 60px;
@@ -39,56 +49,37 @@
     background-color: #666;
     color: #fff;
 }
-
-#index #news {
-    text-align: center;
-}
-
-#index #news .cell {
-    margin-bottom: 30px;
-    margin-left: 3%;
-    margin-right: 3%;
-    width: 26%;
-    display: inline-block;
-}
-
-#index #news .cell a:hover {
-    text-decoration: none;
-}
-
-#index #news .cell p {
-    font-size: 10px;
-}
 </style>
 {% endblock %} {% block body %}
 <div id="index">
-    <div class="form-group">
-        <input type="text" class="form-control" id="keyword" placeholder="enter your interests">
-        <div id="search"><span>GO</span></div>
+    <div id="timelines">
+        <svg width="1024" height="200">
+            <g></g>
+        </svg>
     </div>
-    <div id="news"></div>
+    <div class="form-group">
+        <input type="text" class="form-control" id="keyword" placeholder="输入关键词">
+        <input type="password" class="form-control" id="token" placeholder="输入Token">
+        <div id="search"><span>搜索</span></div>
+    </div>
 </div>
 <script>
 $(document).ready(function() {
     $('#index #search').click(function(event) {
         var keyword = $('#index #keyword').val();
         if (keyword != '') {
-            $('#index #search span').text('Please Wait');
+            // $('#index #search span').text('');
             $.ajax({
                     url: '{{url_for("search")}}',
                     type: 'POST',
                     dataType: 'json',
                     data: {
-                        keyword: keyword
+                        keyword: keyword,
+                        token: $('#index #token').val()
                     },
                 })
                 .done(function(data) {
-                    $('#index .form-group').hide();
-                    var news = data['news'];
-                    for (var i = 0; i < news.length; i++) {
-                        var $cell = "<div class='cell'><a href='" + news[i].url + "' target='blank'><h4>" + news[i]['title'] + "</h4></a><p>" + news[i]['timestamp'] + "</p>" + news[i]['content'].substr(0, 30) + "...</div>";
-                        $('#index #news').append($cell);
-                    }
+                    console.log(data);
                 })
                 .fail(function() {
                     console.log("error");
