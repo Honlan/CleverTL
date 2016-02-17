@@ -5,13 +5,23 @@
 }
 
 #index #timelines {
-    margin-bottom: 20px;
+    height: 120px;
+    position: relative;
+    margin: 30px 10% 90px 10%;
+}
+
+#index #timelines .keyword {
+    position: absolute;
+}
+
+#index #timelines .keyword a {
+    text-decoration: none;
 }
 
 #index .form-group {
     width: 40%;
     margin: 0 auto;
-    margin-bottom: 120px;
+    margin-bottom: 80px;
 }
 
 #index #token {
@@ -21,17 +31,11 @@
 }
 
 #index #search {
-    font-size: 18px;
-    text-align: center;
-}
-
-#index #search span {
     border: 1px solid #666;
     padding: 8px 24px;
     border-radius: 5px;
-    position: relative;
-    top: 60px;
     color: #666;
+    display: inline-block;
     transition: color .3s;
     -o-transition: color .3s;
     -ms-transition: color .3s;
@@ -44,31 +48,79 @@
     -webkit-transition: background-color .3s;
 }
 
-#index #search span:hover {
+#index #search:hover {
     cursor: pointer;
     background-color: #666;
     color: #fff;
+}
+#index #info {
+    display: none;
 }
 </style>
 {% endblock %} {% block body %}
 <div id="index">
     <div id="timelines">
-        <svg width="1024" height="200">
-            <g></g>
-        </svg>
+        {% for item in keywords %}
+        <div class="keyword" style="font-size:{{item['count']}}px;"><a href="{{url_for('timeline',keyword=item['keyword'])}}">{{item.keyword}}</a></div>
+        {% endfor %}
     </div>
     <div class="form-group">
         <input type="text" class="form-control" id="keyword" placeholder="输入关键词">
         <input type="password" class="form-control" id="token" placeholder="输入Token">
-        <div id="search"><span>搜索</span></div>
+        <div style="font-size:18px;text-align:center;margin-top:60px;height:43px;">
+            <div id="search">搜索</div>
+            <div id="info"></div>
+        </div>
     </div>
 </div>
 <script>
 $(document).ready(function() {
+    var width = $('#index #timelines').width();
+    var height = $('#index #timelines').height();
+    var points = new Array();
+    var left = 0;
+    var top = 0;
+    $('#index #timelines .keyword').each(function(index, el) {
+        var $obj = $(this);
+        while(true) {
+            left = parseInt(width * (Math.random() * 70 + 10) / 100);
+            top = parseInt(height * (Math.random() * 70 + 10) / 100);
+
+            var collision = false;
+
+            for (var i = 0; i < points.length; i++) {
+                if ((top + $obj.height()) < points[i][1] || top > points[i][3]) {
+                    continue;
+                }
+                else if ((left + $obj.width()) < points[i][0] || left > points[i][2]) {
+                    continue;
+                }
+                else {
+                    collision = true;
+                    break;
+                }
+            }
+
+            if (collision) {
+                continue;
+            }
+            else {
+                points.push([left - 10, top - 10, left + $(this).width() + 10, top + $(this).height() + 10]);
+                $obj.css({
+                    left: left.toString() + 'px',
+                    top: top.toString() + 'px'
+                });
+                break;
+            }
+        }
+    });
+
     $('#index #search').click(function(event) {
         var keyword = $('#index #keyword').val();
         if (keyword != '') {
-            // $('#index #search span').text('');
+            $('#index #search').fadeOut('fast', function(){
+                $('#index #info').html("<span style='margin-right:10px;' class='fa fa-fw fa-spinner fa-pulse'></span>时间线生成中...").fadeIn('fast');
+            });
             $.ajax({
                     url: '{{url_for("search")}}',
                     type: 'POST',
@@ -79,7 +131,9 @@ $(document).ready(function() {
                     },
                 })
                 .done(function(data) {
-                    console.log(data);
+                    if (data['ok']) {
+                        window.location.href = "{{url_for('timeline', keyword='')}}" + keyword;
+                    }
                 })
                 .fail(function() {
                     console.log("error");

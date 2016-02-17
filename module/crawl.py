@@ -29,8 +29,10 @@ def closedb(db,cursor):
 class Crawler(object):
 	def __init__(self, keyword):
 		print '爬取新闻数据'
-		(self.db, self.cursor) = connectdb()
-		self.cursor.execute("insert into task(keyword,status,info) values(%s, %s, %s)",[keyword, 0, ''])
+		(db, cursor) = connectdb()
+		cursor.execute("insert into task(keyword,status,info) values(%s, %s, %s)",[keyword, 0, ''])
+		cursor.execute("delete from news where keyword=%s",[keyword])
+		closedb(db, cursor)
 
 		self.keyword = keyword
 		self.urlThread = 4
@@ -39,6 +41,8 @@ class Crawler(object):
 		self.r.setnx('search_id', 0)
 		self.search_id = self.r.incr('search_id')
 		self.news = []
+		self.target = 600
+		self.hungry = 0
 
 	# 执行任务
 	def run(self):
@@ -52,12 +56,9 @@ class Crawler(object):
 
 		while 1:
 			if self.urlThread == 0 and self.crawlThread == 0:
-				self.cursor.execute("delete from news where keyword=%s",[self.keyword])
-				self.cursor.executemany("insert into news(keyword,url,title,timestamp,content,knowledge) values(%s,%s,%s,%s,%s,%s)", self.news)
-				closedb(self.db, self.cursor)
 				return
 			else:
-				time.sleep(0.5)
+				time.sleep(2)
 
 	# 获取url子线程
 	def access(self):
@@ -66,7 +67,7 @@ class Crawler(object):
 		while 1:
 			page_id = self.r.incr('page_id_%d' % self.search_id)
 
-			if len(self.news) >= 120:
+			if len(self.news) >= self.target or self.hungry >= 500:
 				self.urlThread -= 1
 				if self.urlThread == 0:
 					self.r.delete('page_id_%d' % self.search_id)
@@ -98,7 +99,8 @@ class Crawler(object):
 		headers = {}
 		headers["User-Agent"] = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36"
 		while 1:
-			if len(self.news) >= 120:
+			print self.urlThread, self.crawlThread, len(self.news), self.hungry
+			if len(self.news) >= self.target or self.hungry >= 500:
 				self.crawlThread -= 1
 				if self.crawlThread == 0:
 					self.r.delete('urls_%d' % self.search_id)
@@ -108,6 +110,7 @@ class Crawler(object):
 			target = self.r.spop('urls_%d_tmp' % self.search_id)
 
 			if target == None:
+				self.hungry += 1
 				time.sleep(random.random())
 				continue
 
@@ -129,11 +132,14 @@ class Crawler(object):
 			except Exception, e:
 				continue
 			else:
-				if len(self.news) >= 120:
+				if len(self.news) >= self.target:
 					continue
 				# self.news.append([self.keyword, target, title, int(time.mktime(time.strptime(timestamp,'%Y-%m-%d %H:%M:%S'))), content])
-				self.cursor.execute("update task set info=%s where keyword=%s", [len(self.news), self.keyword])
-				self.news.append([self.keyword, target, title, int(time.mktime(time.strptime(timestamp,'%Y年%m月%d日 %H:%M'))), content,''])
+				print title
+				self.news.append(title)
+				(db, cursor) = connectdb()
+				cursor.execute("insert into news(keyword,url,title,timestamp,content,knowledge) values(%s,%s,%s,%s,%s,%s)", [self.keyword, target, title, int(time.mktime(time.strptime(timestamp,'%Y年%m月%d日 %H:%M'))), content,''])
+				closedb(db, cursor)
 			finally:
 				pass
 

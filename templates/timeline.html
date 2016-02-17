@@ -2,6 +2,7 @@
 <style>
 #timeline {
     padding: 50px 60px;
+    position: relative;
 }
 
 #timeline #distribution {
@@ -17,15 +18,19 @@
     background-color: #f5f5f5;
     padding: 10px;
 }
+
 #timeline #distribution #control_panel .controller {
     margin-bottom: 3px;
 }
+
 #timeline #distribution #control_panel .controller:hover {
     cursor: pointer;
 }
+
 #timeline #distribution #control_panel .controller:hover>div {
     border: 2px #666 solid;
 }
+
 #timeline #distribution #control_panel .controller>div {
     display: inline-block;
     margin-right: 10px;
@@ -36,6 +41,7 @@
 #timeline #distribution #control_panel #distribution_mode {
     margin-top: 15px;
 }
+
 #timeline #distribution #control_panel #distribution_mode:hover {
     cursor: pointer;
 }
@@ -54,6 +60,7 @@
     -moz-transition: background-color .6s;
     -webkit-transition: background-color .6s;
 }
+
 #timeline #distribution #control_panel #distribution_mode div#mode1 {
     border-top-left-radius: 2px;
     border-bottom-left-radius: 2px;
@@ -64,10 +71,10 @@
     border-top-right-radius: 2px;
     border-bottom-right-radius: 2px;
 }
+
 #timeline #distribution #control_panel #distribution_mode div.active {
     background-color: #FF7772;
 }
-
 
 #timeline #distribution text {
     fill: #666;
@@ -173,54 +180,147 @@
     background-color: #FF7772;
     color: #fff;
 }
+
+#timeline #viewpoint {
+    position: absolute;
+    right: 95px;
+    top: 255px;
+    padding: 6px 8px;
+    border: 1px solid #666;
+    color: #666;
+    border-radius: 3px;
+    transition: color, background-color .6s;
+    -o-transition: color, background-color .6s;
+    -ms-transition: color, background-color .6s;
+    -moz-transition: color, background-color .6s;
+    -webkit-transition: color, background-color .6s;
+    z-index: 99;
+}
+
+#timeline #viewpoint:hover {
+    cursor: pointer;
+    color: white;
+    background-color: #FF7772;
+    border-color: #FF7772;
+}
+
+#timeline #part2 {
+    display: none;
+}
+#timeline #part2 #threeD1, #timeline #part2 #threeD2 {
+    text-align: center;
+}
+#timeline #infobox {
+    position: absolute;
+    display: none;
+    max-width: 250px;
+    background-color: #F5F5F5;
+    padding: 12px;
+    border-radius: 3px;
+    box-shadow: 1px 1px 3px rgba(20,20,20,0.4);
+}
+#timeline #infobox h5 {
+    margin-top: 0;
+    font-size: 13px;
+    line-height: 1.2;
+}
+#timeline #infobox p {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 0;
+}
+#timeline #infotime {
+    margin-right: 10px;
+}
+#timeline #threeD2 svg g line {
+    transition: stroke .3s;
+    -o-transition: stroke .3s;
+    -ms-transition: stroke .3s;
+    -moz-transition: stroke .3s;
+    -webkit-transition: stroke .3s;
+}
+#timeline #threeD2 svg g line:hover {
+    cursor: pointer;
+    stroke: rgba(0, 0, 0, 0.3);
+}
+#timeline #threeD1 svg g circle {
+    transition: fill .3s;
+    -o-transition: fill .3s;
+    -ms-transition: fill .3s;
+    -moz-transition: fill .3s;
+    -webkit-transition: fill .3s;
+}
+#timeline #threeD1 svg g circle:hover {
+    cursor: pointer;
+    fill: #eee;
+}
 </style>
 {% endblock %} {% block body %}
 <div id="timeline">
-    <div id="distribution">
-        <div id="control_panel"></div>
-        <svg width='1024px' height='320px'>
-            <g></g>
-        </svg>
+    <div id="infobox">
+        <h5></h5>
+        <p><span id="infotime"></span><span id="infocate"></span></p>
     </div>
-    <div id="detail">
-        <div class="row">
-            <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-                <div id="section2">
-                    <h4>&nbsp;</h4>
-                    <div style="overflow-y:scroll;height:307px;"></div>
-                </div>
-            </div>
-            <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-                <div id="section1">
-                    <div class="headline">
-                        <h4 style='width:50px;'>分类</h4>
-                        <h4 style='width:55px;'>日期</h4>
-                        <h4 style='width:100px;'>内容</h4>
-                    </div>
-                    <div style="height:307px;overflow-y:scroll;padding:10px 20px;">
-                        <table class="table table-hover" style="margin-bottom:0;">
-                        </table>
+    <div id="viewpoint">新闻视图</div>
+    <div id="part1" style="height:725px;">
+        <div id="distribution">
+            <div id="control_panel"></div>
+            <svg width='1024px' height='320px'>
+                <g></g>
+            </svg>
+        </div>
+        <div id="detail">
+            <div class="row">
+                <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                    <div id="section2">
+                        <h4>&nbsp;</h4>
+                        <div style="overflow-y:scroll;height:307px;"></div>
                     </div>
                 </div>
-            </div>
-            <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-                <div id="section3">
-                    <div class="headline">
-                        <h4 style="width:100px;text-align:center">&nbsp;</h4>
+                <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                    <div id="section1">
+                        <div class="headline">
+                            <h4 style='width:50px;'>分类</h4>
+                            <h4 style='width:55px;'>日期</h4>
+                            <h4 style='width:100px;'>内容</h4>
+                        </div>
+                        <div style="height:307px;overflow-y:scroll;padding:10px 20px;">
+                            <table class="table table-hover" style="margin-bottom:0;">
+                            </table>
+                        </div>
                     </div>
-                    <div id='knowledge' style="height:307px;overflow:hidden;padding:10px 20px;text-align:center;">
-                        <svg width='300px' height='290px'>
-                            <g></g>
-                        </svg>
+                </div>
+                <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                    <div id="section3">
+                        <div class="headline">
+                            <h4 style="width:100px;text-align:center">&nbsp;</h4>
+                        </div>
+                        <div id='knowledge' style="height:307px;overflow:hidden;padding:10px 20px;text-align:center;">
+                            <svg width='300px' height='290px'>
+                                <g></g>
+                            </svg>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <div id="part2">
+        <div id="threeD1" style="height:550px;">
+            <svg width='1024px' height='550px'>
+                <g></g>
+            </svg>
+        </div>
+        <div id="threeD2" style="height:175px;">
+            <svg width='1024px' height='175px'>
+                <g></g>
+            </svg>
+        </div>
+    </div>
 </div>
 <script>
 $(document).ready(function() {
-    var height = 320;
+    var height = 320, height1 = 550, height2 = 175;
     $('#distribution svg').append($(document.createElementNS("http://www.w3.org/2000/svg", "line")).attr({
         'x1': 24,
         'y1': height - 20,
@@ -229,10 +329,12 @@ $(document).ready(function() {
         'stroke': '#000',
         'stroke-width': 1
     }));
-    var axis = eval('({{axis|safe}})');
+
+    var axis = eval({{axis|safe}});
     var interX = Math.floor(976 / axis['slot']),
         startX = parseInt((976 - interX * axis['slot']) / 2) + 24,
         endX = 1024 - startX;
+
     for (var i = 0; i <= axis['slot']; i++) {
         $('#distribution svg').append($(document.createElementNS("http://www.w3.org/2000/svg", "line")).attr({
             'x1': startX + i * interX,
@@ -247,9 +349,10 @@ $(document).ready(function() {
             'y': height,
         }).text(axis['xs'][i]));
     }
-    var elements = eval('({{timeline|safe}})');
-    var news = eval('({{news|safe}})');
-    var maxnum = eval('({{maxnum|safe}})');
+
+    var elements = eval({{timeline|safe}});
+    var news = eval({{news|safe}});
+    var maxnum = eval({{maxnum|safe}});
     var colors = new Array();
     colors['1'] = "#FC9D9A";
     colors['2'] = "#F9CDAD";
@@ -277,22 +380,21 @@ $(document).ready(function() {
         j++;
         $('#distribution #control_panel').append("<div class='controller' id='controller" + i + "'><div style='width:16px;height:12px;background-color:" + colors[i] + "'></div> " + categories[i] + "</div>")
     }
-    $('#distribution #control_panel').append("<div id='distribution_mode'><span>堆叠<span/><div class='active' id='mode1'></div><div id='mode2'></div></div>")
-    $('#distribution #distribution_mode').click(function(){
+    $('#distribution #control_panel').append("<div id='distribution_mode'><span>堆叠<span/><div class='active' id='mode1'></div><div id='mode2'></div></div>");
+
+    $('#distribution #distribution_mode').click(function() {
         if (flag) {
             flag = !flag;
             $('#distribution #distribution_mode #mode1').removeClass('active');
             $('#distribution #distribution_mode #mode2').addClass('active');
-        }
-        else {
+        } else {
             flag = !flag;
             $('#distribution #distribution_mode #mode2').removeClass('active');
             $('#distribution #distribution_mode #mode1').addClass('active');
         }
         if (flag) {
             distribution();
-        }
-        else {
+        } else {
             distribution1();
         }
     });
@@ -310,13 +412,12 @@ $(document).ready(function() {
         }
         if (flag) {
             distribution();
-        }
-        else {
+        } else {
             distribution1();
         }
     });
 
-    var curves = eval('({{curves|safe}})');
+    var curves = eval({{curves|safe}});
     var curve1 = d3.svg.line().x(function(d) {
         return parseInt(parseFloat(d[0]) * (endX - startX)) + startX;
     }).y(function(d) {
@@ -343,11 +444,20 @@ $(document).ready(function() {
 
         var yPos = new Array();
         var data = new Array();
+        var data1 = new Array();
+        data1['1'] = [];
+        data1['2'] = [];
+        data1['3'] = [];
+        data1['4'] = [];
+        data1['6'] = [];
+        data1['7'] = [];
         for (var i = 0; i < elements.length; i++) {
             if (status[elements[i]['tag']]) {
+                data1[elements[i]['tag'].toString()].push(i);
                 data.push(i);
             }
         }
+        data1 = data1['1'].concat(data1['2']).concat(data1['3']).concat(data1['4']).concat(data1['6']).concat(data1['7']);
 
         for (var k in status) {
             if (status[k]) {
@@ -361,7 +471,7 @@ $(document).ready(function() {
             }
         }
 
-        var text = d3.select('#distribution svg g').selectAll('rect').data(data, function(d) {
+        var text = d3.select('#distribution svg g').selectAll('rect').data(data1, function(d) {
             return d;
         });
         text.transition().duration(600).attr('transform', function(d) {
@@ -417,19 +527,32 @@ $(document).ready(function() {
         var current = 0;
         var data = new Array();
         var data1 = new Array();
+        var indexs = new Array();
         data1['1'] = [];
         data1['2'] = [];
         data1['3'] = [];
         data1['4'] = [];
         data1['6'] = [];
         data1['7'] = [];
+        indexs['1'] = [];
+        indexs['2'] = [];
+        indexs['3'] = [];
+        indexs['4'] = [];
+        indexs['6'] = [];
+        indexs['7'] = [];
         for (var i = 0; i < elements.length; i++) {
             if (status[elements[i]['tag']]) {
                 data1[elements[i]['tag'].toString()].push(i);
+                if (data1[elements[i]['tag'].toString()].length == 1) {
+                    indexs[elements[i]['tag'].toString()].push(1);
+                } else {
+                    indexs[elements[i]['tag'].toString()].push(0);
+                }
                 data.push(i);
             }
         }
         data1 = data1['1'].concat(data1['2']).concat(data1['3']).concat(data1['4']).concat(data1['6']).concat(data1['7']);
+        indexs = indexs['1'].concat(indexs['2']).concat(indexs['3']).concat(indexs['4']).concat(indexs['6']).concat(indexs['7']);
 
         $('#distribution svg g path').animate({
             opacity: 0
@@ -441,16 +564,7 @@ $(document).ready(function() {
             return d;
         });
         text.transition().duration(600).attr('transform', function(d, i) {
-            var tmp = startX + parseInt((endX - startX) * elements[d]['x']) - 8;
-            if (yPos.hasOwnProperty(tmp)) {
-                yPos[tmp] += 1;
-            } else {
-                yPos[tmp] = 1;
-            }
-
-            var result = 'translate(' + tmp + ',' + (height - 25 - yPos[tmp] * parseInt((height - 25) / maxnum['band']) - current) + ')';
-
-            if (i % 20 == 19) {
+            if (indexs[i] && i > 0) {
                 var t = 0;
                 for (var k in yPos) {
                     if (yPos[k] > t) {
@@ -470,6 +584,14 @@ $(document).ready(function() {
                 }));
             }
 
+            var tmp = startX + parseInt((endX - startX) * elements[d]['x']) - 8;
+            if (yPos.hasOwnProperty(tmp)) {
+                yPos[tmp] += 1;
+            } else {
+                yPos[tmp] = 1;
+            }
+
+            var result = 'translate(' + tmp + ',' + (height - 25 - yPos[tmp] * parseInt((height - 25) / maxnum['band']) - current) + ')';
             return result;
         }).attr({
             'height': parseInt((height - 25) / maxnum['band'] * 0.8)
@@ -488,16 +610,7 @@ $(document).ready(function() {
                 return d;
             }
         }).transition().duration(600).attr('transform', function(d, i) {
-            var tmp = startX + parseInt((endX - startX) * elements[d]['x']) - 8;
-            if (yPos.hasOwnProperty(tmp)) {
-                yPos[tmp] += 1;
-            } else {
-                yPos[tmp] = 1;
-            }
-
-            var result = 'translate(' + tmp + ',' + (height - 25 - yPos[tmp] * parseInt((height - 25) / maxnum['band']) - current) + ')';
-
-            if (i % 20 == 19) {
+            if (indexs[i] && i > 0) {
                 var t = 0;
                 for (var k in yPos) {
                     if (yPos[k] > t) {
@@ -516,6 +629,15 @@ $(document).ready(function() {
                     'class': 'refers'
                 }));
             }
+
+            var tmp = startX + parseInt((endX - startX) * elements[d]['x']) - 8;
+            if (yPos.hasOwnProperty(tmp)) {
+                yPos[tmp] += 1;
+            } else {
+                yPos[tmp] = 1;
+            }
+
+            var result = 'translate(' + tmp + ',' + (height - 25 - yPos[tmp] * parseInt((height - 25) / maxnum['band']) - current) + ')';
 
             return result;
         });
@@ -668,6 +790,591 @@ $(document).ready(function() {
     $('#timeline #distribution svg g').on('click', 'rect', function() {
         choose($(this).attr('name'));
     });
+
+    var newsview = false;
+    var firstChangeView = true;
+
+    $('#timeline #viewpoint').click(function(event) {
+        if (newsview) {
+            $('#timeline #viewpoint').text('新闻视图');
+            $('#timeline #part2').fadeOut('fast', function() {
+                newsview = !newsview;
+                $('#timeline #part1').fadeIn('fast');
+            });
+        }
+        else {
+            $('#timeline #viewpoint').text('时间线图');
+            $('#timeline #part1').fadeOut('fast', function() {
+                newsview = !newsview;
+                $('#timeline #part2').fadeIn('fast', function(){
+                    if (firstChangeView) {
+                        draw3DAxis();
+                        firstChangeView = false;
+                    }
+                });
+            });
+        }
+    });
+
+    var sidelength = 300;
+    var dayselect = [];
+    var coordSpace = [];
+    var coordPoint = [];
+    var coordStat = [];
+    var coordCont = [];
+
+    function draw3DAxis() {
+        var axis = new Array();
+        // 1图坐标轴
+        axis[0] = {
+            from: {
+                x: sidelength + 24,
+                y: sidelength + 24
+            },
+            to: {
+                x: 0,
+                y: sidelength + 24
+            },
+            width: 1,
+            color: '#555'
+        };
+        axis[1] = {
+            from: {
+                x: sidelength + 24,
+                y: sidelength + 24
+            },
+            to: {
+                x: sidelength + 24,
+                y: 0
+            },
+            width: 1,
+            color: '#555'
+        };
+        axis[2] = {
+            from: {
+                x: sidelength + 24,
+                y: sidelength + 24
+            },
+            to: {
+                x: 1024,
+                y: height1
+            },
+            width: 2,
+            color: '#999'
+        };
+        axis[3] = {
+            from: {
+                x: 0,
+                y: sidelength + 24
+            },
+            to: {
+                x: 10,
+                y: sidelength + 20
+            },
+            width: 2,
+            color: '#999'
+        };
+        axis[4] = {
+            from: {
+                x: 0,
+                y: sidelength + 24
+            },
+            to: {
+                x: 10,
+                y: sidelength + 28
+            },
+            width: 2,
+            color: '#999'
+        };
+        axis[5] = {
+            from: {
+                x: sidelength + 24,
+                y: 0
+            },
+            to: {
+                x: sidelength + 28,
+                y: 10
+            },
+            width: 2,
+            color: '#999'
+        };
+        axis[6] = {
+            from: {
+                x: sidelength + 24,
+                y: 0
+            },
+            to: {
+                x: sidelength + 20,
+                y: 10
+            },
+            width: 2,
+            color: '#999'
+        };
+        axis[7] = {
+            from: {
+                x: 1024,
+                y: height1
+            },
+            to: {
+                x: 1010,
+                y: height1 - 1
+            },
+            width: 2,
+            color: '#999'
+        };
+        axis[8] = {
+            from: {
+                x: 1024,
+                y: height1
+            },
+            to: {
+                x: 1015,
+                y: height1 - 7
+            },
+            width: 2,
+            color: '#999'
+        };
+
+        d3.select('#threeD1 svg g').selectAll('line').data([0,1,2,3,4,5,6,7,8]).enter().append('line').attr({
+            'stroke': function(d){
+                return axis[d].color
+            },
+            'stroke-width': function(d){
+                return axis[d].width
+            },
+            x1: function(d){
+                return axis[d].from.x
+            },
+            y1: function(d){
+                return axis[d].from.y
+            },
+            x2: function(d){
+                return axis[d].from.x
+            },
+            y2: function(d){
+                return axis[d].from.y
+            }
+        }).style('z-index', -1).transition().delay(function(d){
+            if (d > 2) {
+                return 400
+            }
+            else {
+                return 0
+            }
+        }).duration(600).attr({
+            x2: function(d){
+                return axis[d].to.x
+            },
+            y2: function(d){
+                return axis[d].to.y
+            }
+        });
+        // 2图坐标轴
+        var axis = new Array();
+        axis[0] = {
+            from: {
+                x: 512,
+                y: height2 - 20
+            },
+            to1: {
+                x: 24,
+                y: height2 - 20
+            },
+            to2: {
+                x: 1000,
+                y: height2 - 20
+            },
+            width: 1,
+            color: '#444'
+        };
+        var axisData = eval({{axis|safe}});
+        var text = axisData['xs'];
+        var slot = axisData['slot'];
+        var data = [0];
+
+        for (var i = 1; i < slot; i++) {
+            var tmp = {
+                from: {
+                    x: parseInt(startX + (endX - startX) * i / slot),
+                    y: height2 - 20
+                },
+                to1: {
+                    x: parseInt(startX + (endX - startX) * i / slot),
+                    y: height2 - 20
+                },
+                to2: {
+                    x: parseInt(startX + (endX - startX) * i / slot),
+                    y: height2 - 25
+                },
+                width: 1,
+                color: '#444'
+            };
+            axis.push(tmp);
+            data.push(i);
+        }
+
+        d3.select('#threeD2 svg').selectAll('line').data(data).enter().append('line').attr({
+            'stroke': function(d){
+                return axis[d].color
+            },
+            'stroke-width': function(d){
+                return axis[d].width
+            },
+            x1: function(d){
+                return axis[d].from.x
+            },
+            y1: function(d){
+                return axis[d].from.y
+            },
+            x2: function(d){
+                return axis[d].from.x
+            },
+            y2: function(d){
+                return axis[d].from.y
+            }
+        }).transition().delay(function(d){
+            if (d > 0) {
+                return 400
+            }
+            else {
+                return 0
+            }
+        }).duration(600).attr({
+            x1: function(d){
+                return axis[d].to1.x
+            },
+            y1: function(d){
+                return axis[d].to1.y
+            },
+            x2: function(d){
+                return axis[d].to2.x
+            },
+            y2: function(d){
+                return axis[d].to2.y
+            }
+        });
+        // 2图坐标轴标签
+        d3.select("#threeD2 svg").selectAll("text").data(text).enter().append("text").text(function(d){
+            return d
+        }).attr({
+            "fill": '#666',
+            "fill-opacity": 1e-6,
+            "transform": function(d, i){
+                return "translate(" + parseInt(startX + (endX - startX) * i / slot - 20) + "," + height2 + ")"
+            }
+        }).transition().delay(400).duration(600).attr('fill-opacity', 1);;
+
+        var curves3D = eval({{curves3D|safe}});
+        var curves3DMax = {{curves3DMax}};
+
+        var area = d3.svg.area().x(function(d) { 
+            return x(d.x) + 24 
+        }).y0(function(d) {
+            return y(d.y0) 
+        }).y1(function(d) { 
+            return y(d.y0 + d.y)
+        });
+        var x = d3.scale.linear().domain([0, 1]).range([0, 976]);
+        var y = d3.scale.linear().domain([0, curves3DMax]).range([height2 - 20, 0]);
+        var stack = d3.layout.stack().offset("zero");
+        curves3D = stack(curves3D);
+        // 2图堆叠图
+        d3.select('#threeD2 svg g').selectAll("path").data(curves3D).enter().append("path").attr({
+            "fill": function(d, i){ 
+                var tmp = ['1', '2', '3', '4', '6', '7'];
+                return colors[tmp[i]];
+            },
+            "d": area,
+            "fill-opacity": 1e-6
+        }).transition().delay(800).duration(600).attr('fill-opacity', 1);
+        // 2图纵轴按钮
+        for (var i = 0; i <= parseInt((axisData['newsendtime'] - axisData['newsbegintime']) / 3600 / 24); i++) {
+            dayselect.push(0);
+        }
+        dayselect[0] = 1;
+        var tmp = 1.0 / ((axisData['endtime'] - axisData['begintime']) / 3600 / 24);
+        d3.select('#threeD2 svg g').selectAll('line').data(dayselect).enter().append('line').attr({
+            x1: function(d, i){
+                return (parseFloat((axisData['newsbegintime'] - axisData['begintime'])) / (axisData['endtime'] - axisData['begintime']) + i * tmp) * 976 + 24;
+            },
+            y1: height2 - 20,
+            x2: function(d, i){
+                return (parseFloat((axisData['newsbegintime'] - axisData['begintime'])) / (axisData['endtime'] - axisData['begintime']) + i * tmp) * 976 + 24;
+            },
+            y2: 0,
+            name: function(d,i){
+                return i;
+            },
+            'stroke': 'rgba(0,0,0,0)',
+            'stroke-width': 30,
+        }).transition().delay(800).duration(600).attr('stroke', function(d){
+            if (d == 1) {
+                return 'rgba(0,0,0,0.3)';
+            }
+            else {
+                return 'rgba(0,0,0,0)';
+            }
+        });
+        // 1图散点圆
+        var mask = 0;
+        for (var i = 0; i < dayselect.length; i++) {
+            if (dayselect[i] == 1) {
+                mask = i;
+                break;
+            }
+        }
+        var tmp = parseFloat(1)/((axisData['newsendtime'] - axisData['newsbegintime'])/3600/24);
+        d3.select('#threeD1 svg g').selectAll('rect').data([1]).enter().append('rect').attr({
+            'width': 0,
+            'height': 0,
+            'fill': 'rgba(200,200,200,0.5)',
+            'transform': 'translate(324,324)',
+        }).transition().delay(400).duration(600).attr({
+            'width': sidelength,
+            'height': sidelength,
+            'transform': function(d){
+                return 'translate(' + ((1024 - sidelength - 24) * tmp * mask + 24) + ',' + ((height1 - sidelength - 24) * tmp * mask + 24) + ')';
+            }
+        });
+
+        for (var i = 0; i <= (axisData['endtime'] - axisData['begintime'])/3600/24; i++) {
+            var tmp = [];
+            var sum = 0;
+            for (var j = 0; j < 6; j++) {
+                tmp.push(curves3D[j][i].y);
+                sum += curves3D[j][i].y;
+            }
+            tmp.push(sum);
+            for (var j = 0; j < 6; j++) {
+                if (tmp[6] == 0) {
+                    tmp[j] = 0;
+                }
+                else {
+                    tmp[j] = parseFloat(tmp[j]) / tmp[6];    
+                }
+            }
+            coordStat.push(tmp);
+        }
+        var radius = sidelength / 3;
+        var PI = 3.1415926;
+        for (var i = 0; i <= (axisData['endtime'] - axisData['begintime'])/3600/24; i++) {
+            var tmp = [];
+            tmp['1'] = [];
+            tmp['2'] = [];
+            tmp['3'] = [];
+            tmp['4'] = [];
+            tmp['6'] = [];
+            tmp['7'] = [];
+            var cont = [];
+            cont['1'] = [];
+            cont['2'] = [];
+            cont['3'] = [];
+            cont['4'] = [];
+            cont['6'] = [];
+            cont['7'] = [];
+            if (coordStat[i][6] == 0) {
+                coordSpace.push(tmp);
+                coordCont.push(cont);
+                continue;
+            }
+            var tmap = [];
+            var sum = 0;
+            tmap.push('1');
+            tmap.push('2');
+            tmap.push('3');
+            tmap.push('4');
+            tmap.push('6');
+            tmap.push('7');
+            for (var j = 0; j < 6; j++) {
+                if (coordStat[i][j] == 0) {
+                    continue
+                }
+                var ratio = coordStat[i][j];
+                var x = radius * Math.cos((ratio/2  + sum) * 2 * PI) + sidelength / 2;
+                var y = radius * Math.sin((ratio/2  + sum) * 2 * PI) + sidelength / 2;
+                tmp[tmap[j]].push([x,y]);
+                cont[tmap[j]].push([sum, sum + ratio]);
+                sum += ratio;
+            }
+            coordSpace.push(tmp);
+            coordCont.push(cont);
+        }
+
+        var minspace = 30;
+        var padding = 40;
+        for (var i = 0; i < news.length; i++) {
+            var layer = parseInt((news[i]['timestamp'] - axisData['begintime'])/3600/24);
+            var tmp = layer;
+            layer = coordSpace[tmp][news[i]['tag'].toString()];
+            for (;;) {
+                var rad = Math.random() * 2 * PI;
+                if (layer.length == 1) {
+                    var x = layer[0][0] + Math.cos(rad) * minspace * Math.random() / 2;
+                    var y = layer[0][1] + Math.sin(rad) * minspace * Math.random() / 2;
+
+                    if (x > sidelength - padding || x < padding || y > sidelength - padding || y < padding) {
+                        continue;
+                    }
+
+                    var trad = coordCont[tmp][news[i]['tag'].toString()][0];
+                    var d1 = Math.abs(- Math.sin(trad[0] * 2 * PI) * (x - sidelength/2) + Math.cos(trad[0] * 2 * PI) * (y - sidelength/2));
+                    var d2 = Math.abs(- Math.sin(trad[1] * 2 * PI) * (x - sidelength/2) + Math.cos(trad[1] * 2 * PI) * (y - sidelength/2));
+                    if (d1 < 10 || d2 < 10) {
+                        continue
+                    }
+
+                    coordSpace[tmp][news[i]['tag'].toString()].push([x,y]);
+                    coordPoint.push([x,y]);
+                    break;
+                }
+                else {
+                    var index = Math.floor(Math.random() * (layer.length - 1)) + 1;
+                    var x = layer[index][0] + Math.cos(rad) * minspace;
+                    var y = layer[index][1] + Math.sin(rad) * minspace;
+                    
+                    if (x > sidelength - padding || x < padding || y > sidelength - padding || y < padding) {
+                        continue;
+                    }
+
+                    var trad = coordCont[tmp][news[i]['tag'].toString()][0];
+                    var d1 = Math.abs(- Math.sin(trad[0] * 2 * PI) * (x - sidelength/2) + Math.cos(trad[0] * 2 * PI) * (y - sidelength/2));
+                    var d2 = Math.abs(- Math.sin(trad[1] * 2 * PI) * (x - sidelength/2) + Math.cos(trad[1] * 2 * PI) * (y - sidelength/2));
+                    if (d1 < 10 || d2 < 10) {
+                        continue
+                    }
+
+                    var collide = false;
+                    for (var j = 1; j < layer.length; j++) {
+                        if ((x - layer[j][0]) * (x - layer[j][0]) + (y - layer[j][1]) * (y - layer[j][1]) < minspace * minspace) {
+                            collide = true;
+                            break;
+                        }
+                    }
+                    if (collide) {
+                        continue;
+                    }
+                    else {
+                        coordSpace[tmp][news[i]['tag'].toString()].push([x,y]);
+                        coordPoint.push([x,y]);
+                        break;
+                    }
+                }
+            }
+        }
+
+        var newsindex = [];
+        for (var i = 0; i < news.length; i++) {
+            if (parseInt((news[i]['timestamp'] - axisData['newsbegintime'])/3600/24) == mask) {
+                newsindex.push(i);
+            }
+        }
+        var tmp = axisData['newsendtime'] - axisData['newsbegintime'];
+        d3.select("#threeD1 svg g").selectAll('circle').data(newsindex).enter().append("circle").attr({
+            'cx': function(d, i){
+                var x = (1024 - sidelength - 24) * (news[d]['timestamp'] - axisData['newsbegintime']) / tmp;
+                return parseInt(x + coordPoint[d][0] + 24);
+            },
+            'cy': function(d, i){
+                var y = (height1 - sidelength - 24) * (news[d]['timestamp'] - axisData['newsbegintime']) / tmp;
+                return parseInt(y + coordPoint[d][1] + 24) + 20;
+            },
+            'r': 10,
+            "fill": function(d, i){
+                return colors[news[d]['tag'].toString()];
+            },
+            'name': function(d){
+                return d;
+            },
+            "fill-opacity": 1e-6
+        }).transition().delay(800).duration(600).attr({
+            'fill-opacity': function(d, i){
+                return 1;
+            },
+            'cy': function(d, i){
+                var y = (height1 - sidelength - 24) * (news[d]['timestamp'] - axisData['newsbegintime']) / tmp;
+                return parseInt(y + coordPoint[d][1] + 24);
+            },
+        });
+    }
+
+    $('#threeD2 svg g').on('click', 'line', function(){
+        $('#threeD2 svg g line').attr('stroke', 'rgba(0,0,0,0)');
+        $(this).attr('stroke', 'rgba(0,0,0,0.3)');
+        chooseDay($(this).attr('name'));
+    });
+
+    $('#threeD1 svg g').on('mouseover', 'circle', function(event) {
+        event.preventDefault();
+        var newsid = $(this).attr('name');
+        $('#infobox h5').css('color', $(this).attr('fill')).text(news[newsid]['title']);
+        var newDate = new Date();
+        newDate.setTime(news[newsid]['timestamp'] * 1000);
+        $('#infobox #infotime').text(newDate.toJSON().substr(0, 10));
+        $('#infobox #infocate').text(categories[news[newsid]['tag']]);
+        $('#infobox').css({
+            left: event.pageX + 40,
+            top: event.pageY - 92
+        }).fadeIn('fast');
+    })
+    $('#threeD1 svg g').on('mouseout', 'circle', function(event) {
+        event.preventDefault();
+        $('#infobox').fadeOut('fast');
+    })
+
+    function chooseDay(day){
+        for (var i = 0; i < dayselect.length; i++) {
+            dayselect[i] = 0;
+        }
+        dayselect[day] = 1;
+        var mask = day;
+        var tmp = parseFloat(1)/((axis['newsendtime'] - axis['newsbegintime'])/3600/24);
+        d3.select('#threeD1 svg g').selectAll('rect').data([1]).transition().delay(200).duration(300).attr('transform', function(d){
+            return 'translate(' + ((1024 - sidelength - 24) * tmp * mask + 24) + ',' + ((height1 - sidelength - 24) * tmp * mask + 24) + ')';
+        });
+        var newsindex = [];
+        for (var i = 0; i < news.length; i++) {
+            if (parseInt((news[i]['timestamp'] - axis['newsbegintime'])/3600/24) == mask) {
+                newsindex.push(i);
+            }
+        }
+        var tmp = axis['newsendtime'] - axis['newsbegintime'];
+        var circles = d3.select("#threeD1 svg g").selectAll('circle').data(newsindex, function(d) {
+            return d;
+        });
+        circles.enter().append("circle").attr({
+            'cx': function(d, i){
+                var x = (1024 - sidelength - 24) * (news[d]['timestamp'] - axis['newsbegintime']) / tmp;
+                return parseInt(x + coordPoint[d][0] + 24);
+            },
+            'cy': function(d, i){
+                var y = (height1 - sidelength - 24) * (news[d]['timestamp'] - axis['newsbegintime']) / tmp;
+                return parseInt(y + coordPoint[d][1] + 24) + 20;
+            },
+            'r': 10,
+            "fill": function(d, i){
+                return colors[news[d]['tag'].toString()];
+            },
+            'name': function(d){
+                return d;
+            },
+            'fill-opacity': 1e-6
+        }).transition().delay(400).duration(300).attr({
+            'fill-opacity': function(d, i){
+                return 1;
+            },
+            'cy': function(d, i){
+                var y = (height1 - sidelength - 24) * (news[d]['timestamp'] - axis['newsbegintime']) / tmp;
+                return parseInt(y + coordPoint[d][1] + 24);
+            },
+        });
+        circles.exit().transition().duration(300).attr({
+            'fill-opacity': 1e-6,
+            'cy': function(d, i){
+                var y = (height1 - sidelength - 24) * (news[d]['timestamp'] - axis['newsbegintime']) / tmp;
+                return parseInt(y + coordPoint[d][1] + 24) + 20;
+            },
+        }).remove();
+    }
 });
 </script>
 {% endblock %}

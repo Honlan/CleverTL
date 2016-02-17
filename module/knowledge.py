@@ -124,3 +124,83 @@ class Knowledger(object):
 			cursor.execute("update news set knowledge=%s where id=%s",[forces, item['id']])
 		closedb(db, cursor)
 		return
+
+		# for item in news:
+		# 	nodes = []
+		# 	links = {}
+		# 	forces = {}
+		# 	forces['nodes'] = '['
+		# 	forces['links'] = '['
+		# 	nodeId = 0
+
+		# 	placeJ = []
+		# 	placeS = []
+		# 	humanJ = []
+		# 	humanS = []
+
+		# 	words = pseg.cut(item['content'] + item['title'])
+		# 	for word, flag in words:
+		# 		if flag == 'ns' and not word in placeJ:
+		# 			placeJ.append(word)
+
+		# 		if flag == 'nr' and not word in humanJ:
+		# 			humanJ.append(word)
+
+		# 	words = SnowNLP((item['content'] + item['title']).decode('utf8'))	
+		# 	for word, flag in words.tags:
+		# 		if flag == 'ns' and not word in placeS:
+		# 			placeS.append(word)
+
+		# 		if flag == 'nr' and not word in humanS:
+		# 			humanS.append(word)
+
+		# 	place = list(set(placeJ) & set(placeS))
+		# 	human = list(set(humanJ) & set(humanS))
+
+		# 	for p in place:
+		# 		nodes.append((p, str(nodeId)))
+		# 		nodeId += 1
+		# 		forces['nodes'] += '{"name": "' + p + '", "group": 1},'
+		# 	for h in human:
+		# 		nodes.append((h, str(nodeId)))
+		# 		nodeId += 1
+		# 		forces['nodes'] += '{"name": "' + h + '", "group": 2},'
+
+		# 	sentences = item['content'].split('。')
+		# 	sentences.append(item['title'])
+
+		# 	tmp = []
+
+		# 	for s in sentences:
+		# 		s = s.replace('\t', '').replace('\n', '').strip()
+
+		# 		if s == '':
+		# 			continue
+
+		# 		if s in tmp:
+		# 			continue
+		# 		tmp.append(s)
+
+		# 		for x in xrange(0, len(nodes)):
+		# 			for y in xrange(x + 1, len(nodes)):
+		# 				if s.find(nodes[x][0]) >= 0 and s.find(nodes[y][0]) >= 0:
+		# 					if not links.has_key(nodes[x][1]):
+		# 						links[nodes[x][1]] = {}
+		# 					if not links[nodes[x][1]].has_key(nodes[y][1]):
+		# 						links[nodes[x][1]][nodes[y][1]] = 0
+		# 					links[nodes[x][1]][nodes[y][1]] += 1
+
+		# 	for key, value in links.items():
+		# 		for k, v in value.items():
+		# 			forces['links'] += '{"source": ' + key + ', "target": ' + k + ', "value": ' + str(v) + '},'
+
+		# 	if forces['nodes'][-1] == ',':
+		# 		forces['nodes'] = forces['nodes'][:-1]
+
+		# 	if forces['links'][-1] == ',':
+		# 		forces['links'] = forces['links'][:-1]
+
+		# 	forces = '{"nodes":' + forces['nodes'] + '], "links": ' + forces['links'] + ']}'
+		# 	cursor.execute("update news set knowledge=%s where id=%s",[forces, item['id']])
+		# closedb(db, cursor)
+		# return
