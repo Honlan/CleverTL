@@ -1,0 +1,7 @@
+Flask
+mysql-python
+redis
+beautifulsoup4
+tgrocery
+snownlp
+jieba
