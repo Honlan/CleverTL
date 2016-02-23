@@ -4,6 +4,7 @@
 import sys
 reload(sys)
 sys.setdefaultencoding( "utf8" )
+sys.settrace 
 from flask import *
 import warnings
 warnings.filterwarnings("ignore")
