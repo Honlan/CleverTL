@@ -34,7 +34,10 @@ class Knowledger(object):
 		cursor.execute("select id, title, content from news where keyword=%s",[keyword])
 		news = cursor.fetchall()
 
+		count = 0
 		for item in news:
+			print count
+			count += 1
 			nodes = {}
 			links = {}
 			forces = {}

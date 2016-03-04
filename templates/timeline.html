@@ -254,6 +254,10 @@
     cursor: pointer;
     fill: #eee;
 }
+#timeline #threeD1 svg g line.link.active {
+    stroke: #FF7772;
+    stroke-width: 1;
+}
 </style>
 {% endblock %} {% block body %}
 <div id="timeline">
@@ -422,12 +426,12 @@ $(document).ready(function() {
         return parseInt(parseFloat(d[0]) * (endX - startX)) + startX;
     }).y(function(d) {
         return 0;
-    }).interpolate('monotone');
+    }).interpolate('basis');
     var curve2 = d3.svg.line().x(function(d) {
         return parseInt(parseFloat(d[0]) * (endX - startX)) + startX;
     }).y(function(d) {
         return height - 20 - d[1] * Math.floor((height - 20) / maxnum['line']);
-    }).interpolate('monotone');
+    }).interpolate('basis');
 
     for (var k in curves) {
         d3.select('#distribution svg g').append('path').style("opacity", 1e-6).attr('d', curve1(curves[k])).attr({
@@ -820,12 +824,15 @@ $(document).ready(function() {
     var dayselect = [];
     var coordSpace = [];
     var coordPoint = [];
+    var coordLine = [];
     var coordStat = [];
     var coordCont = [];
+    var idtoindex = new Array();
+    var circleradius = 0;
 
     function draw3DAxis() {
-        var axis = new Array();
         // 1图坐标轴
+        var axis = new Array();
         axis[0] = {
             from: {
                 x: sidelength + 24,
@@ -1137,6 +1144,8 @@ $(document).ready(function() {
             }
         });
 
+        var dailyMaxNews = 0;
+
         for (var i = 0; i <= (axisData['endtime'] - axisData['begintime'])/3600/24; i++) {
             var tmp = [];
             var sum = 0;
@@ -1154,7 +1163,12 @@ $(document).ready(function() {
                 }
             }
             coordStat.push(tmp);
+            if (sum > dailyMaxNews) {
+                dailyMaxNews = sum;
+            }
         }
+        circleradius = sidelength / Math.sqrt(dailyMaxNews) / 8;
+
         var radius = sidelength / 3;
         var PI = 3.1415926;
         for (var i = 0; i <= (axisData['endtime'] - axisData['begintime'])/3600/24; i++) {
@@ -1200,9 +1214,10 @@ $(document).ready(function() {
             coordCont.push(cont);
         }
 
-        var minspace = 30;
+        var minspace = 3 * circleradius;
         var padding = 40;
         for (var i = 0; i < news.length; i++) {
+            idtoindex[news[i]['id'].toString()] = i;
             var layer = parseInt((news[i]['timestamp'] - axisData['begintime'])/3600/24);
             var tmp = layer;
             layer = coordSpace[tmp][news[i]['tag'].toString()];
@@ -1219,7 +1234,7 @@ $(document).ready(function() {
                     var trad = coordCont[tmp][news[i]['tag'].toString()][0];
                     var d1 = Math.abs(- Math.sin(trad[0] * 2 * PI) * (x - sidelength/2) + Math.cos(trad[0] * 2 * PI) * (y - sidelength/2));
                     var d2 = Math.abs(- Math.sin(trad[1] * 2 * PI) * (x - sidelength/2) + Math.cos(trad[1] * 2 * PI) * (y - sidelength/2));
-                    if (d1 < 10 || d2 < 10) {
+                    if (d1 < circleradius || d2 < circleradius) {
                         continue
                     }
 
@@ -1239,7 +1254,7 @@ $(document).ready(function() {
                     var trad = coordCont[tmp][news[i]['tag'].toString()][0];
                     var d1 = Math.abs(- Math.sin(trad[0] * 2 * PI) * (x - sidelength/2) + Math.cos(trad[0] * 2 * PI) * (y - sidelength/2));
                     var d2 = Math.abs(- Math.sin(trad[1] * 2 * PI) * (x - sidelength/2) + Math.cos(trad[1] * 2 * PI) * (y - sidelength/2));
-                    if (d1 < 10 || d2 < 10) {
+                    if (d1 < circleradius || d2 < circleradius) {
                         continue
                     }
 
@@ -1262,6 +1277,60 @@ $(document).ready(function() {
             }
         }
 
+        for (var i = 0; i < news.length; i++) {
+            var links = news[i]['links'];
+            
+            if (links == '') {
+                continue;
+            }
+            links = links.split(',');
+            for (var j = 0; j < links.length; j++) {
+                var tmp = links[j].split(':');
+                if (idtoindex.hasOwnProperty(tmp[0])) {
+                    coordLine.push([coordPoint[i][0], coordPoint[i][1], coordPoint[idtoindex[tmp[0]]][0], coordPoint[idtoindex[tmp[0]]][1], parseFloat(tmp[1]), news[i]['timestamp']]);
+                }
+            }
+        }
+
+
+        // 连线
+        var lineindex = [];
+        var tmp = axisData['newsendtime'] - axisData['newsbegintime'];
+        for (var i = 0; i < coordLine.length; i++) {
+            if (parseInt((coordLine[i][5] - axisData['newsbegintime'])/3600/24) == mask) {
+                lineindex.push(i);
+            }
+        }
+        d3.select("#threeD1 svg g").selectAll('.link').data(lineindex).enter().append("line").attr({
+            'x1': function(d, i){
+                var x = (1024 - sidelength - 24) * (coordLine[d][5] - axisData['newsbegintime']) / tmp;
+                return parseInt(x + coordLine[d][0] + 24);
+            },
+            'y1': function(d, i){
+                var y = (height1 - sidelength - 24) * (coordLine[d][5] - axisData['newsbegintime']) / tmp;
+                return parseInt(y + coordLine[d][1] + 24);
+            },
+            'x2': function(d, i){
+                var x = (1024 - sidelength - 24) * (coordLine[d][5] - axisData['newsbegintime']) / tmp;
+                return parseInt(x + coordLine[d][2] + 24);
+            },
+            'y2': function(d, i){
+                var y = (height1 - sidelength - 24) * (coordLine[d][5] - axisData['newsbegintime']) / tmp;
+                return parseInt(y + coordLine[d][3] + 24);
+            },
+            'stroke': '#666',
+            'stroke-width': 1,
+            'opacity': '0',
+            'class': 'link'
+        }).transition().delay(function(d, i){
+            return 1000 + i * 10;
+        }).duration(function(d, i){
+            return 300;
+        }).attr('opacity', function(d, i){
+            return coordLine[d][4];
+        });
+
+        // 画点
         var newsindex = [];
         for (var i = 0; i < news.length; i++) {
             if (parseInt((news[i]['timestamp'] - axisData['newsbegintime'])/3600/24) == mask) {
@@ -1278,7 +1347,7 @@ $(document).ready(function() {
                 var y = (height1 - sidelength - 24) * (news[d]['timestamp'] - axisData['newsbegintime']) / tmp;
                 return parseInt(y + coordPoint[d][1] + 24) + 20;
             },
-            'r': 10,
+            'r': circleradius,
             "fill": function(d, i){
                 return colors[news[d]['tag'].toString()];
             },
@@ -1315,10 +1384,41 @@ $(document).ready(function() {
             left: event.pageX + 40,
             top: event.pageY - 92
         }).fadeIn('fast');
+
+        var x = $(this).attr('cx');
+        var y = $(this).attr('cy');
+
+        $('#threeD1 svg g line.link').each(function(index, el) {
+            if ($(this).attr('x1') == x && $(this).attr('y1') == y) {
+                $(this).attr('class', 'link active');
+            } 
+            else if ($(this).attr('x2') == x && $(this).attr('y2') == y) {
+                $(this).attr('class', 'link active');
+            }    
+            else {
+                $(this).hide();
+            }        
+
+        });
     })
     $('#threeD1 svg g').on('mouseout', 'circle', function(event) {
         event.preventDefault();
         $('#infobox').fadeOut('fast');
+
+        var x = $(this).attr('cx');
+        var y = $(this).attr('cy');
+
+        $('#threeD1 svg g line.link').each(function(index, el) {
+            if ($(this).attr('x1') == x && $(this).attr('y1') == y) {
+                $(this).attr('class', 'link');
+            } 
+            else if ($(this).attr('x2') == x && $(this).attr('y2') == y) {
+                $(this).attr('class', 'link');
+            }
+            else {
+                $(this).show();
+            }            
+        });
     })
 
     function chooseDay(day){
@@ -1331,6 +1431,51 @@ $(document).ready(function() {
         d3.select('#threeD1 svg g').selectAll('rect').data([1]).transition().delay(200).duration(300).attr('transform', function(d){
             return 'translate(' + ((1024 - sidelength - 24) * tmp * mask + 24) + ',' + ((height1 - sidelength - 24) * tmp * mask + 24) + ')';
         });
+
+        // 连线
+        var lineindex = [];
+        var tmp = axis['newsendtime'] - axis['newsbegintime'];
+        for (var i = 0; i < coordLine.length; i++) {
+            if (parseInt((coordLine[i][5] - axis['newsbegintime'])/3600/24) == mask) {
+                lineindex.push(i);
+            }
+        }
+        var lines = d3.select("#threeD1 svg g").selectAll('.link').data(lineindex, function(d) {
+            return d;
+        });
+        lines.enter().append("line").attr({
+            'x1': function(d, i){
+                var x = (1024 - sidelength - 24) * (coordLine[d][5] - axis['newsbegintime']) / tmp;
+                return parseInt(x + coordLine[d][0] + 24);
+            },
+            'y1': function(d, i){
+                var y = (height1 - sidelength - 24) * (coordLine[d][5] - axis['newsbegintime']) / tmp;
+                return parseInt(y + coordLine[d][1] + 24);
+            },
+            'x2': function(d, i){
+                var x = (1024 - sidelength - 24) * (coordLine[d][5] - axis['newsbegintime']) / tmp;
+                return parseInt(x + coordLine[d][2] + 24);
+            },
+            'y2': function(d, i){
+                var y = (height1 - sidelength - 24) * (coordLine[d][5] - axis['newsbegintime']) / tmp;
+                return parseInt(y + coordLine[d][3] + 24);
+            },
+            'stroke': '#666',
+            'stroke-width': 1,
+            'opacity': '0',
+            'class': 'link'
+        }).transition().delay(function(d, i){
+            return 600 + i * 10;
+        }).duration(function(d, i){
+            return 300;
+        }).attr('opacity', function(d, i){
+            return coordLine[d][4];
+        });
+        lines.exit().transition().duration(300).attr({
+            'opacity': '0'
+        }).remove();
+
+        // 画点
         var newsindex = [];
         for (var i = 0; i < news.length; i++) {
             if (parseInt((news[i]['timestamp'] - axis['newsbegintime'])/3600/24) == mask) {
@@ -1350,7 +1495,7 @@ $(document).ready(function() {
                 var y = (height1 - sidelength - 24) * (news[d]['timestamp'] - axis['newsbegintime']) / tmp;
                 return parseInt(y + coordPoint[d][1] + 24) + 20;
             },
-            'r': 10,
+            'r': circleradius,
             "fill": function(d, i){
                 return colors[news[d]['tag'].toString()];
             },

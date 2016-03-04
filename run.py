@@ -78,13 +78,14 @@ def timeline(keyword):
 
 	begintime = np.min([x['timestamp'] for x in timeline])
 	endtime = np.max([x['timestamp'] for x in timeline])
-	day = (endtime - begintime) / 3600 / 24
-	slot = np.argmax([float(day)/(math.ceil(float(day)/x)*x) for x in xrange(5,11)]) + 5
+	day = float((endtime - begintime) / 3600 / 24)
+	slot = np.argmax([day/(math.ceil(day/x)*x) for x in xrange(5,11)]) + 5
 	interval = math.ceil(day / slot)
 
-	begintime -= interval * 3600 * 24
-	endtime += interval * 3600 * 24
 	slot += 2
+	begintime -= interval * 3600 * 24
+	endtime = begintime + interval * 3600 * 24 * slot
+	# endtime += interval * 3600 * 24
 	xs = [time.strftime('%m-%d', time.localtime(begintime + x * 3600 * 24 * interval)) for x in xrange(0, slot + 1)]
 	axis = {'slot':slot, 'xs':xs, 'begintime': begintime, 'endtime': endtime}
 

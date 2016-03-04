@@ -4,4 +4,4 @@ redis
 beautifulsoup4
 tgrocery
 snownlp
-jieba
+numpy

@@ -41,7 +41,7 @@ class Crawler(object):
 		self.r.setnx('search_id', 0)
 		self.search_id = self.r.incr('search_id')
 		self.news = []
-		self.target = 600
+		self.target = 180
 		self.hungry = 0
 
 	# 执行任务
@@ -135,6 +135,8 @@ class Crawler(object):
 				if len(self.news) >= self.target:
 					continue
 				# self.news.append([self.keyword, target, title, int(time.mktime(time.strptime(timestamp,'%Y-%m-%d %H:%M:%S'))), content])
+				if title in self.news:
+					continue
 				print title
 				self.news.append(title)
 				(db, cursor) = connectdb()
